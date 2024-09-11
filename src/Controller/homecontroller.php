@@ -14,4 +14,12 @@ class homecontroller
         $number = 125;
        return new response(content:"salut $number");
     }
+  
+/**
+ * @route("/params/{name}", name="name")
+ */
+  public function params($name)
+    {
+ return new response (content:"bonjour monsieur : $name");
+    }
 }
