@@ -35,6 +35,10 @@ class Zoo
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $updatedat = null;
 
+    #[ORM\ManyToOne(inversedBy: 'Zoo')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Service $service = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -120,6 +124,18 @@ class Zoo
     public function setUpdatedat(?\DateTimeImmutable $updatedat): static
     {
         $this->updatedat = $updatedat;
+
+        return $this;
+    }
+
+    public function getService(): ?Service
+    {
+        return $this->service;
+    }
+
+    public function setService(?Service $service): static
+    {
+        $this->service = $service;
 
         return $this;
     }
