@@ -24,7 +24,7 @@ class AvisController extends AbstractController
         public function new(): response
         {
             $Avis = new Avis();
-            $Avis->setSpeudo('Arcadia');
+            $Avis->setSpeudo('');
             $Avis->setComentaire('tres agrable moment!');
            $Avis->setVisible(Boolean());
     
