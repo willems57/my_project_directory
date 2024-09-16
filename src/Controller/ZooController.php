@@ -7,31 +7,43 @@ use App\Repository\ZooRepository;
 use Doctrine\DBAL\Types\DateTimeImmutableType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\BrowserKit\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('api/zoo', name: 'app_api_zoo')]
 class ZooController extends AbstractController
 {
-public function __construct(private EntityManagerInterface $manager, private ZooRepository $zooRepository)
+public function __construct(
+private EntityManagerInterface $manager,
+private ZooRepository $zooRepository,
+private SerializerInterface $serializer,
+private UrlGeneratorInterface $urlhenerator
+)
 {
 
 }
 
     #[Route(name: 'new', methods: 'post')]
-    public function new(): response
+    public function new(Request$request): JsonResponse
     {
-        $zoo = new Zoo();
-        $zoo->setName('Arcadia');
-        $zoo->setDescription('ce zoo fait le bonheur de tous ces visiteur depuis 1963.');
+        $zoo = $this->serializer->deserialize($request->getContent(), Zoo::class, 'json');
        $zoo->setCreatedAt(new \DateTimeImmutable());
 
        $this->manager->persist($zoo);
        $this->manager->flush();
 //a stoquer en bas de donnee
-return $this->json(['message' => "zoo resource created with {$zoo->getId()} id"],
-    
-                Response::HTTP_CREATED,);
+$responseData = $this->serializer->serialize($zoo, 'json');
+
+        $location = $this->urlhenerator->generate(
+             'app_api_zoo_show',
+             ['id' => $zoo->getId()],
+             UrlGeneratorInterface::ABSOLUTE_URL,
+        );
+        return new JsonResponse($responseData, Response::HTTP_CREATED, ["Location" => $location], true);
 
     }
     #[Route('/{id}', name: 'show', methods: 'get')]
