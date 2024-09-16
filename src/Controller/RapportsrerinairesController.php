@@ -22,7 +22,7 @@ public function __construct(private EntityManagerInterface $manager, private Rap
     public function new(): response
     {
        $Rapportsverinaires = new Rapportsverinaires(); 
-       $Rapportsverinaires->setCreatedAt(new \DateTimeImmutable());
+       $Rapportsverinaires->setDate(new \DateTimeImmutable());
        $Rapportsverinaires->setDetails('');
        $this->manager->persist($Rapportsverinaires);
        $this->manager->flush();
