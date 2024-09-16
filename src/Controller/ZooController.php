@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Zoo;
 use App\Repository\ZooRepository;
-use Doctrine\DBAL\Types\DateTimeImmutableType;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\BrowserKit\Request;
@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
 #[Route('api/zoo', name: 'app_api_zoo')]
@@ -60,28 +61,36 @@ $responseData = $this->serializer->serialize($zoo, 'json');
     }
 
     #[Route('/{id}', name:'edit', methods: 'put')]
-    public function edit(int $id): response
+    public function edit(int $id, Request $Request): JsonResponse
     {
-        $zoo = $this->zooRepository->findOneBy(['id' => $id]);
-          if (!$zoo) 
-        {throw new \Exception("No zoo found for {$id} id");}
- 
-        $zoo->setName('zoo name updated');
+    $zoo=$this->zooRepository->findOneBy(['id' => '$id']);
+    if ($zoo){
+        $zoo = $this->serializer->deserialize(
+        $Request->getContent(),
+        type: $zoo::class,
+        format: 'Json',
+       [AbstractNormalizer::OBJECT_TO_POPULATE => $zoo] 
+        );
+    $zoo->setUpdatedAt(new DateTimeImmutable());
+    $this->manager->flush();
 
-        $this->manager->flush();
+    return new JsonResponse( null, Response::HTTP_NO_CONTENT);
+    }
 
-        return $this->redirectToRoute('app_api_zoo_show', ['id' => $zoo->getId()]);
+    return new JsonResponse(data: null, status: Response::HTTP_NOT_FOUND);
     }
 
     #[Route('/{id}', name: 'delete', methods: 'delete')]
-    public function delete(int $id): response
+    public function delete(int $id): JsonResponse
     {
         $zoo = $this->zooRepository->findOneBy(['id' => $id]);
-        if (!$zoo) 
-        {throw new \Exception("No zoo found for {$id} id");}
-
+        if (!$zoo) {
         $this->manager->remove($zoo);
         $this->manager->flush();
-        return $this->json(['message'=> 'zoo ressource delated'], Response::HTTP_NO_CONTENT);
+
+    return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+    }
+
+    return new JsonResponse(null, Response::HTTP_NOT_FOUND);
     }
 }
