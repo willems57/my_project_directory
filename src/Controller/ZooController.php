@@ -47,13 +47,16 @@ $responseData = $this->serializer->serialize($zoo, 'json');
 
     }
     #[Route('/{id}', name: 'show', methods: 'get')]
-    public function show(int $id): Response
+    public function show(int $id): JsonResponse
     {
         $zoo = $this->zooRepository->findOneBy(['id' => $id]);
         if (!$zoo) 
-        {throw new \Exception('No zoo found for {$id} id');}
+        {$responsedata=$this->serializer->serialize($zoo, format: 'Json');
         
-        return $this->json(['message' => "A zoo was found : {$zoo->getName()} for {$zoo->getId()} id"]);   
+            return new JsonResponse($responsedata, Response::HTTP_OK, [], true);
+        }
+        
+        return new JsonResponse(null, Response::HTTP_NOT_FOUND);   
     }
 
     #[Route('/{id}', name:'edit', methods: 'put')]
