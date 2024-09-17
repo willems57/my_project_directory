@@ -29,7 +29,7 @@ private UrlGeneratorInterface $urlhenerator
 }
 
     #[Route(name: 'new', methods: 'post')]
-    public function new(Request$request): JsonResponse
+    public function new(Request $request): JsonResponse
     {
         $zoo = $this->serializer->deserialize($request->getContent(), Zoo::class, 'json');
        $zoo->setCreatedAt(new \DateTimeImmutable());
@@ -69,7 +69,7 @@ $responseData = $this->serializer->serialize($zoo, 'json');
         $Request->getContent(),
         type: $zoo::class,
         format: 'Json',
-       [AbstractNormalizer::OBJECT_TO_POPULATE => $zoo] 
+        [AbstractNormalizer::OBJECT_TO_POPULATE => $zoo] 
         );
     $zoo->setUpdatedAt(new DateTimeImmutable());
     $this->manager->flush();

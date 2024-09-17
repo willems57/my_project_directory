@@ -8,14 +8,21 @@ use Doctrine\ORM\EntityManagerInterface;
 use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('api/Avis', name: 'app_api_Avis')]
 class AvisController extends AbstractController
 
 
 {
-    public function __construct(private EntityManagerInterface $manager, private AvisRepository $AvisRepository)
+    public function __construct(
+    private EntityManagerInterface $manager, 
+    private AvisRepository $AvisRepository,
+    private SerializerInterface $serializer,
+private UrlGeneratorInterface $urlhenerator
+    )
     {
     
     }

@@ -7,13 +7,20 @@ use App\Repository\RapportsverinairesRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[Route('api/Rapportsverinaires', name: 'app_api_Rapportsverinaires')]
 class RapportsrerinairesController extends AbstractController
 
 {
-public function __construct(private EntityManagerInterface $manager, private RapportsverinairesRepository $rapportsverinairesRepository)
+public function __construct(
+    private EntityManagerInterface $manager, 
+    private RapportsverinairesRepository $rapportsverinairesRepository,
+    private SerializerInterface $serializer,
+private UrlGeneratorInterface $urlhenerator
+    )
 {
 
 }
