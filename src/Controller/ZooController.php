@@ -63,13 +63,14 @@ $responseData = $this->serializer->serialize($zoo, 'json');
     #[Route('/{id}', name:'edit', methods: 'put')]
     public function edit(int $id, Request $Request): JsonResponse
     {
-    $zoo=$this->zooRepository->findOneBy(['id' => '$id']);
-    if ($zoo){
+        $zooExtract=$this->zooRepository->findOneBy(['id' => '$id']);
+    if ($zooExtract){
+        $zooExtract = new Zoo();
         $zoo = $this->serializer->deserialize(
         $Request->getContent(),
-        type: $zoo::class,
+        type: zoo::class,
         format: 'Json',
-        [AbstractNormalizer::OBJECT_TO_POPULATE => $zoo] 
+        [AbstractNormalizer::OBJECT_TO_POPULATE => $zooExtract] 
         );
     $zoo->setUpdatedAt(new DateTimeImmutable());
     $this->manager->flush();
